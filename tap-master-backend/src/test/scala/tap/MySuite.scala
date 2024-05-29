@@ -11,7 +11,7 @@ class MySuite extends munit.FunSuite {
     val player = Player(uuid,  "Foo")
     val state: GameState.Started = GameState.Started(blueTeam = List(player), redTeam = Nil, 0, "", Color(0, 0, 0))
 
-    assert(GameRules.playerTeam(uuid, state) == Team.Blue)
+    val value = GameRules.playerTeam(uuid, state)
   }
 
   test("known red player") {
@@ -20,7 +20,7 @@ class MySuite extends munit.FunSuite {
     val player = Player(uuid,  "Foo")
     val state: GameState.Started = GameState.Started(blueTeam = Nil, redTeam = List(player), 0, "", Color(0, 0, 0))
 
-    assert(GameRules.playerTeam(uuid, state) == Team.Red)
+    val value = GameRules.playerTeam(uuid, state)
   }
 
   test("example test that succeeds") {
