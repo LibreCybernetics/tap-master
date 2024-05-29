@@ -30,7 +30,7 @@ enum GameState:
 
 object GameRules:
 
-  private def playerTeam(playerId: UUID, state: GameState.Started): Team | "Unknown" =
+  private[tap] def playerTeam(playerId: UUID, state: GameState.Started): Team | "Unknown" =
     if state.blueTeam.exists(_.playerId == playerId) then Team.Blue
     else if state.redTeam.exists(_.playerId == playerId) then Team.Red
     else "Unknown"
