@@ -29,10 +29,10 @@ enum GameState:
   case Finished(winner: Team, blueTeam: List[Player], redTeam: List[Player])
 
 object GameRules:
-  private[tap] def playerTeam(playerId: UUID, state: GameState.Started): Team =
-    if state.blueTeam.exists(_.playerId == playerId) then Team.Blue
-    else if state.redTeam.exists(_.playerId == playerId) then Team.Red
-    else ???
+  private[tap] def playerTeam(playerId: UUID, state: GameState.Started): Option[Team] =
+    if state.blueTeam.exists(_.playerId == playerId) then Some(Team.Blue)
+    else if state.redTeam.exists(_.playerId == playerId) then Some(Team.Red)
+    else None
 
   private def isWinConditionMet(state: GameState.Started): Option[Team] =
     if state.numbers == 30 then Some(Team.Blue)
@@ -65,21 +65,21 @@ object GameRules:
 
   def tap(action: PlayerAction, s1: GameState.Started): GameState.Started | GameState.Finished =
     val s2 = (action.action, playerTeam(action.playerId, s1)) match
-      case (GameAction.TapNumber, Team.Blue) =>
+      case (GameAction.TapNumber, Some(Team.Blue)) =>
         s1.copy(numbers = s1.numbers + 1)
-      case (GameAction.TapString, Team.Blue) if s1.strings.contains("r") =>
+      case (GameAction.TapString, Some(Team.Blue)) if s1.strings.contains("r") =>
         s1.copy(strings = s1.strings.drop(1))
-      case (GameAction.TapString, Team.Blue) =>
+      case (GameAction.TapString, Some(Team.Blue)) =>
         s1.copy(strings = s1.strings + "b")
-      case (GameAction.TapColor, Team.Blue) =>
+      case (GameAction.TapColor, Some(Team.Blue)) =>
         s1.copy(colors = Color(Math.max(0, s1.colors.r - 20), s1.colors.g, Math.min(255, s1.colors.b + 5)))
-      case (GameAction.TapNumber, Team.Red) =>
+      case (GameAction.TapNumber, Some(Team.Red)) =>
         s1.copy(numbers = s1.numbers - 1)
-      case (GameAction.TapString, Team.Red) if s1.strings.contains("b") =>
+      case (GameAction.TapString, Some(Team.Red)) if s1.strings.contains("b") =>
         s1.copy(strings = s1.strings.drop(1))
-      case (GameAction.TapString, Team.Red) =>
+      case (GameAction.TapString, Some(Team.Red)) =>
         s1.copy(strings = s1.strings + "r")
-      case (GameAction.TapColor, Team.Red) =>
+      case (GameAction.TapColor, Some(Team.Red)) =>
         s1.copy(colors = Color(Math.min(255, s1.colors.r + 20), s1.colors.g, Math.max(0, s1.colors.b - 5)))
       case _ =>
         println(s"Critical error Unknown team for player ${action.playerId}")
