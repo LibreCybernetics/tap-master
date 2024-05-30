@@ -29,11 +29,10 @@ enum GameState:
   case Finished(winner: Team, blueTeam: List[Player], redTeam: List[Player])
 
 object GameRules:
-
-  private[tap] def playerTeam(playerId: UUID, state: GameState.Started): Team | "Unknown" =
+  private[tap] def playerTeam(playerId: UUID, state: GameState.Started): Team =
     if state.blueTeam.exists(_.playerId == playerId) then Team.Blue
     else if state.redTeam.exists(_.playerId == playerId) then Team.Red
-    else "Unknown"
+    else ???
 
   private def isWinConditionMet(state: GameState.Started): Option[Team] =
     if state.numbers == 30 then Some(Team.Blue)
